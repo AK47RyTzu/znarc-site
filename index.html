@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Data Prove | Digital Forensics, VAPT and Cybersecurity</title>
+<meta name="description" content="Digital forensics, penetration testing and security training from certified experts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#121212; --panel:#191b1d; --line:#2a2e32; --text:#e8ecef; --muted:#9aa4ab; --accent:#6f2638; --accent-hi:#c4607a; --accent-dim:rgba(111,38,56,.32);
+  --head:"Montserrat","Helvetica Neue",sans-serif; --body:"IBM Plex Sans","Segoe UI",sans-serif; --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  box-sizing:border-box; padding-bottom:env(safe-area-inset-bottom,0px); --navh:64px;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 72px)}
+body{margin:0;background:var(--bg);color:var(--text);font:400 1.0625rem/1.65 var(--body)}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1;letter-spacing:-.01em}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent-hi);outline-offset:3px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:10;padding-top:env(safe-area-inset-top,0px);margin-bottom:calc(-1 * (var(--navh) + env(safe-area-inset-top,0px)) - 1px);background:transparent;border-bottom:1px solid transparent;transition:background .25s,border-color .25s}
+.nav.solid,.nav.open{background:rgba(18,18,18,.92);backdrop-filter:blur(10px);border-bottom-color:var(--line)}
+.burger{display:none;width:44px;height:44px;background:none;border:0;cursor:pointer;position:relative;color:var(--text)}
+.burger span{position:absolute;left:11px;right:11px;height:2px;background:currentColor;transition:transform .2s,top .2s}
+.burger span:first-child{top:16px}.burger span:last-child{top:26px}
+.nav.open .burger span:first-child{top:21px;transform:rotate(45deg)}.nav.open .burger span:last-child{top:21px;transform:rotate(-45deg)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:var(--navh);gap:24px}
+.logo{display:flex;align-items:center;gap:10px;font:800 1.1rem var(--head);text-decoration:none}
+.nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0;align-items:center}
+.nav li{position:relative}
+.nav a.l{font-size:.95rem;color:var(--muted);text-decoration:none;padding:8px 0;display:inline-block}
+.nav a.l:hover,.nav li:focus-within>a.l{color:var(--text)}
+.drop{position:absolute;top:100%;left:-16px;min-width:210px;background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--accent);padding:8px;display:none}
+.has:hover .drop,.has:focus-within .drop{display:block}
+.drop a{display:block;padding:10px 12px;text-decoration:none;font-size:.95rem;color:var(--muted)}
+.drop a:hover{color:var(--text);background:var(--accent-dim)}
+.btn{display:inline-block;background:var(--accent);color:#fff;font:700 .95rem var(--head);padding:14px 26px;text-decoration:none;border:1px solid var(--accent);transition:background .15s}
+.btn:hover{background:#8a3249}
+.btn.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--accent);background:var(--accent-dim)}
+.nav .btn{padding:10px 18px}
+
+/* hero */
+.hero{position:relative;overflow:hidden;min-height:clamp(560px,90svh,880px);display:flex;align-items:center;padding:calc(var(--navh) + env(safe-area-inset-top,0px) + 64px) 0 80px;border-bottom:1px solid var(--line);background:var(--bg)}
+.hero .wrap{position:relative;z-index:5;width:100%}
+.hero .copy{max-width:600px}
+.hero h1{font-size:clamp(2.1rem,6.4vw,4.1rem);font-weight:800}
+.hero p.lead{color:var(--muted);font-size:1.2rem;max-width:30em;margin:24px 0 36px}
+.cta{display:flex;gap:14px;flex-wrap:wrap}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px) 0 0/100% 56px,linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px) 0 0/56px 100%}
+.visual-stage {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 58%;
+  overflow: hidden;
+}
+
+.visual-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #121212 0%, transparent 27%);
+}
+
+.planet {
+  position: absolute;
+  top: 56%;
+  left: 13%;
+  width: 115%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 2%, rgba(72, 29, 40, 0.6), transparent 9%),
+    radial-gradient(circle at 46% 4%, #27161b 0%, #151314 36%, #0c0c0d 67%);
+  box-shadow:
+    0 -2px 2px rgba(250, 216, 224, 0.55),
+    0 -8px 24px rgba(145, 57, 79, 0.65),
+    0 -38px 90px rgba(145, 57, 79, 0.32);
+  animation: planet-drift 14s ease-in-out infinite;
+}
+
+.horizon-glow {
+  position: absolute;
+  top: 51.5%;
+  left: 27%;
+  width: 66%;
+  height: 10%;
+  border-radius: 50%;
+  background: rgba(145, 57, 79, 0.4);
+  filter: blur(34px);
+  animation: horizon-pulse 5s ease-in-out infinite;
+}
+
+.scan-beam {
+  position: absolute;
+  top: 7%;
+  left: 28%;
+  width: 52%;
+  height: 54%;
+  border: 1px solid rgba(206, 190, 197, 0.18);
+  background: linear-gradient(180deg, rgba(145, 57, 79, 0.09), transparent 70%);
+  box-shadow:
+    inset 0 0 38px rgba(147, 94, 109, 0.04),
+    0 0 16px rgba(147, 94, 109, 0.05);
+  animation: glass-float 7s ease-in-out infinite;
+}
+
+
+.scan-beam::before,
+.scan-beam::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.scan-beam::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.scan-beam::after {
+  right: -1px;
+  bottom: -1px;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+}
+
+.orbital {
+  position: absolute;
+  border: 1px solid rgba(145, 57, 79, 0.2);
+  border-radius: 50%;
+  transform: rotate(-13deg);
+}
+
+.orbital-one {
+  top: 23%;
+  left: 9%;
+  width: 95%;
+  height: 38%;
+  animation: orbital-drift 9s ease-in-out infinite;
+}
+
+.orbital-two {
+  top: 32%;
+  left: 23%;
+  width: 68%;
+  height: 26%;
+  border-color: rgba(255, 255, 255, 0.1);
+  animation: orbital-drift 12s ease-in-out -2s infinite reverse;
+}
+
+.data-line {
+  position: absolute;
+  z-index: 2;
+  height: 1px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.data-line::after {
+  content: '';
+  position: absolute;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, #a65166, transparent);
+  animation: data-run 4s linear infinite;
+}
+
+.data-line-one {
+  top: 27%;
+  right: 8%;
+  width: 28%;
+}
+
+.data-line-two {
+  top: 70%;
+  left: 17%;
+  width: 18%;
+}
+
+.particle {
+  position: absolute;
+  z-index: 3;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #d8b9c1;
+  box-shadow: 0 0 8px #a65166;
+  animation: particle-float 7s ease-in-out infinite;
+}
+
+.particle-one {
+  top: 31%;
+  right: 18%;
+}
+
+.particle-two {
+  top: 47%;
+  left: 31%;
+  animation-delay: -2s;
+}
+
+.particle-three {
+  top: 66%;
+  right: 28%;
+  animation-delay: -4s;
+}
+
+.security-node {
+  position: absolute;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 9px auto;
+  column-gap: 9px;
+  min-width: 168px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: rgba(18, 18, 18, 0.72);
+  backdrop-filter: blur(8px);
+  font-family: var(--mono);
+  
+}
+
+.security-node span {
+  grid-row: 1 / 3;
+  align-self: center;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #a65166;
+  box-shadow: 0 0 8px #a65166;
+}
+
+.security-node b {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.security-node small {
+  margin-top: 3px;
+  font-size: 11px;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.node-one {
+  top: 25%;
+  right: 8%;
+  animation: particle-float 8s ease-in-out infinite;
+}
+
+.node-two {
+  top: 67%;
+  left: 25%;
+  animation: particle-float 9s ease-in-out -3s infinite reverse;
+}
+
+.target-reticle {
+  position: absolute;
+  top: 46%;
+  right: 25%;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(145, 57, 79, 0.35);
+  border-radius: 50%;
+  animation: reticle-spin 12s linear infinite;
+}
+
+.target-reticle::before,
+.target-reticle::after {
+  content: '';
+  position: absolute;
+  background: rgba(145, 57, 79, 0.45);
+}
+
+.target-reticle::before {
+  width: 68px;
+  height: 1px;
+}
+
+.target-reticle::after {
+  width: 1px;
+  height: 68px;
+}
+
+.target-reticle i {
+  width: 5px;
+  height: 5px;
+  border: 1px solid #c27789;
+  border-radius: 50%;
+}
+
+@keyframes breathe {
+  50% {
+    opacity: 0.55;
+    transform: scale(1.12) translate3d(2%, -2%, 0);
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+    box-shadow: 0 0 4px rgba(145, 57, 79, 0.4);
+  }
+}
+
+@keyframes planet-drift {
+  50% {
+    transform: translateY(-1.5%) scale(1.01);
+  }
+}
+
+@keyframes horizon-pulse {
+  50% {
+    opacity: 0.65;
+    filter: blur(45px);
+    transform: scaleX(1.08);
+  }
+}
+
+@keyframes glass-float {
+  50% {
+    transform: translateY(-6px);
+    border-color: rgba(206, 190, 197, 0.25);
+  }
+}
+
+@keyframes orbital-drift {
+  50% {
+    transform: rotate(-9deg) translate(8px, -4px);
+  }
+}
+
+@keyframes data-run {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(430%);
+  }
+}
+
+@keyframes particle-float {
+  50% {
+    opacity: 0.25;
+    transform: translate(8px, -14px);
+  }
+}
+
+@keyframes scroll-line {
+  0% {
+    transform: translateX(-110%);
+  }
+  60%,
+  100% {
+    transform: translateX(110%);
+  }
+}
+
+@keyframes reticle-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 900px) {
+  .site-header {
+    grid-template-columns: 1fr auto;
+    padding: 32px 7vw;
+  }
+
+  .desktop-nav {
+    display: none;
+  }
+
+  .hero-content {
+    width: 85%;
+    padding-left: 8vw;
+  }
+
+  .visual-stage {
+    width: 75%;
+    opacity: 0.7;
+  }
+
+  .visual-stage::after {
+    background: linear-gradient(90deg, #121212 0%, rgba(18, 18, 18, 0.86) 24%, transparent 72%);
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-shell {
+    height: 700px;
+    min-height: 700px;
+  }
+
+  .hero-shell::after {
+    inset: 10px;
+  }
+
+  .site-header {
+    padding: 28px 24px;
+  }
+
+  .nav-cta {
+    font-size: 0;
+  }
+
+  .hero-content {
+    width: 100%;
+    margin-top: 168px;
+    padding: 0 25px 82px;
+  }
+
+  .eyebrow {
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-size: clamp(55px, 17vw, 78px);
+  }
+
+  .hero-footer {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-top: 38px;
+  }
+
+  .hero-footer p {
+    max-width: 330px;
+  }
+
+  .primary-cta {
+    width: fit-content;
+  }
+
+  .visual-stage {
+    top: 2%;
+    right: -30%;
+    bottom: auto;
+    width: 120%;
+    height: 58%;
+    opacity: 0.48;
+  }
+
+  .scan-beam {
+    left: 30%;
+    width: 56%;
+  }
+
+  .scroll-note {
+    display: none;
+  }
+
+  .frame-top-left {
+    top: 8px;
+    left: 8px;
+  }
+
+  .frame-bottom-right {
+    right: 8px;
+    bottom: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){.hero *{animation:none!important}}
+
+.wordmark-slot{width:min(100%,560px);aspect-ratio:5.2/1;margin:0 0 32px}
+.wordmark{position:fixed;left:0;top:0;z-index:11;transform-origin:0 0;will-change:transform;font-family:var(--head);touch-action:pan-y;user-select:none;-webkit-user-select:none}
+body:has(.nav.open) .wordmark{opacity:0!important;pointer-events:none!important}
+.wordmark canvas{display:block;width:100%;height:100%}
+/* sections */
+section{padding:96px 0}
+.split{display:grid;grid-template-columns:.8fr 1.2fr;gap:64px}
+.split h2{font-size:clamp(1.8rem,3.4vw,2.6rem)}
+.split .intro p{color:var(--muted);margin:20px 0 0;max-width:30em}
+.sticky{position:sticky;top:104px;align-self:start}
+.ledger{border-top:1px solid var(--line)}
+.item{display:grid;grid-template-columns:48px 1fr;gap:20px;padding:28px 0;border-bottom:1px solid var(--line)}
+.item svg{width:40px;height:40px;fill:none;stroke:var(--accent-hi);stroke-width:1.6}
+.item h3{font-size:1.2rem;margin-bottom:6px}
+.item p{margin:0;color:var(--muted);max-width:36em}
+
+/* process */
+.process{background:var(--panel);border-block:1px solid var(--line)}
+.process h2{font-size:clamp(1.8rem,3.4vw,2.6rem);max-width:16em}
+.process .sub{color:var(--muted);max-width:40em;margin:18px 0 56px}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);position:relative;list-style:none;padding:0;margin:0}
+.steps::before{content:"";position:absolute;left:0;right:0;top:15px;height:1px;background:var(--line)}
+.steps li{position:relative;padding:0 20px 0 0}
+.steps .n{width:31px;height:31px;background:var(--bg);border:1px solid var(--accent-hi);color:var(--accent-hi);display:grid;place-items:center;font:700 .85rem var(--head);position:relative;margin-bottom:20px}
+.steps h3{font-size:1.05rem;margin-bottom:8px}
+.steps p{margin:0;font-size:.93rem;color:var(--muted);line-height:1.55}
+
+/* why + contact */
+.why p{color:var(--muted);margin:18px 0 0;max-width:34em}
+.contact{border:1px solid var(--line);border-top:3px solid var(--accent);padding:56px;display:flex;justify-content:space-between;gap:32px;align-items:center;flex-wrap:wrap;background:var(--panel)}
+.contact h2{font-size:clamp(1.6rem,3vw,2.2rem);max-width:15em}
+.contact small{display:block;margin-top:14px;color:var(--muted);font-size:.95rem}
+footer{border-top:1px solid var(--line);padding:32px 0;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer a{text-decoration:none;margin-left:20px}
+footer a:hover{color:var(--accent-hi)}
+
+img,svg{max-width:100%}
+@media(min-width:1600px){.wrap{max-width:1280px}.visual-stage{width:50%}body{font-size:1.125rem}}
+@media(max-width:1100px){
+  .steps{grid-template-columns:repeat(3,1fr);gap:40px 24px}.steps::before{display:none}.split{gap:48px}
+}
+@media(max-width:900px){
+  .split{grid-template-columns:1fr;gap:36px}.sticky{position:static}
+  .visual-stage{width:100%;opacity:.5}.visual-stage::after{background:rgba(18,18,18,.5)}.security-node{display:none}
+  .contact{padding:36px}
+}
+@media(max-width:860px){
+  .burger{display:block}
+  .nav ul{display:none;position:absolute;left:0;right:0;top:100%;flex-direction:column;align-items:stretch;gap:0;padding:4px 24px 24px;background:var(--bg);border-bottom:1px solid var(--line);max-height:calc(100svh - var(--navh) - env(safe-area-inset-top,0px));overflow-y:auto}
+  .nav.open ul{display:flex}
+  .nav li{border-bottom:1px solid var(--line)}
+  .nav a.l{padding:16px 0;width:100%;font-size:1.05rem}
+  .drop,.has:hover .drop,.has:focus-within .drop{position:static;display:block;border:0;background:transparent;padding:0 0 10px 16px;min-width:0}
+  .nav li:last-child{border:0;padding-top:20px}
+  .nav li .btn{display:block;text-align:center;padding:14px}
+}
+@media(max-width:700px){
+  .steps{grid-template-columns:1fr;gap:28px}
+  .steps::before{display:block;left:15px;right:auto;top:0;bottom:0;width:1px;height:auto}
+  .steps li{padding:0 0 0 56px}.steps .n{position:absolute;left:0;top:0;margin:0}
+}
+@media(max-width:560px){
+  .wrap{padding:0 20px}.nav ul{padding-inline:20px}
+  section{padding:64px 0}.hero{padding-bottom:56px}
+  .cta .btn{width:100%;text-align:center}
+  .contact{padding:28px 22px}.contact .btn{width:100%;text-align:center}
+  footer .wrap{flex-direction:column}footer a{margin:0 18px 0 0}
+}
+@media(max-width:380px){
+  .wrap{padding:0 16px}.nav ul{padding-inline:16px}.logo{font-size:1rem}
+  .item{grid-template-columns:36px 1fr;gap:14px}.item svg{width:32px;height:32px}
+}
+@media(max-height:520px) and (orientation:landscape){.hero{min-height:0}}
+</style>
+</head>
+<body>
+<div class="wordmark" id="wordmark" role="img" aria-label="Data Prove"><canvas></canvas></div>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="logo" href="https://data-prove.com/" aria-label="Data Prove home">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><path d="M14 2 3 7v7c0 6 4.5 10.4 11 12 6.5-1.6 11-6 11-12V7z" fill="none" stroke="#c4607a" stroke-width="2"/><path d="m9 14 3.5 3.5L19 11" fill="none" stroke="#c4607a" stroke-width="2"/></svg>
+      <span id="logotext">Data Prove</span>
+    </a>
+    <nav aria-label="Primary">
+      <ul id="menu">
+        <li><a class="l" href="https://data-prove.com/">Home</a></li>
+        <li class="has"><a class="l" href="#solutions" aria-haspopup="true">Solutions</a>
+          <div class="drop">
+            <a href="https://data-prove.com/digital-forensics">Digital Forensics</a>
+            <a href="https://data-prove.com/vapt">VAPT</a>
+            <a href="https://data-prove.com/cybersecurity">Cybersecurity</a>
+          </div>
+        </li>
+        <li><a class="l" href="https://data-prove.com/services">Services</a></li>
+        <li><a class="l" href="https://data-prove.com/training">Training</a></li>
+        <li><a class="btn" href="https://data-prove.com/contact-us">Contact Us</a></li>
+      </ul>
+    </nav>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+<div class="hero">
+  <div class="visual-stage" aria-hidden="true">
+    <div class="orbital orbital-one"></div><div class="orbital orbital-two"></div>
+    <div class="scan-beam"></div><div class="horizon-glow"></div><div class="planet"></div>
+    <div class="data-line data-line-one"></div><div class="data-line data-line-two"></div>
+    <span class="particle particle-one"></span><span class="particle particle-two"></span><span class="particle particle-three"></span>
+    <div class="security-node node-one"><span></span><b id="st">Verifying evidence</b><small id="hash">sha256 ...</small></div>
+    <div class="security-node node-two"><span></span><b>Chain of custody intact</b><small>Case DP-2026-0417</small></div>
+    <div class="target-reticle"><i></i></div>
+  </div>
+  <div class="wrap">
+    <div class="wordmark-slot" id="slot" aria-hidden="true"></div>
+    <div class="copy">
+      <h1>Digital evidence that holds up under scrutiny.</h1>
+      <p class="lead">Data Prove recovers, preserves and analyzes digital evidence for investigators, legal teams and enterprises, and tests your defenses before an attacker does.</p>
+      <div class="cta">
+        <a class="btn" href="https://data-prove.com/contact-us">Request a forensic consultation</a>
+        <a class="btn ghost" href="#process">See how we work</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="solutions">
+  <div class="wrap split">
+    <div class="intro sticky">
+      <h2>Forensics and security testing, built around your case.</h2>
+      <p>We specialize in digital forensics and vulnerability assessment and penetration testing. You get a solution tailored to your environment, not a boxed product.</p>
+    </div>
+    <div class="ledger">
+      <div class="item">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="6" y="6" width="28" height="28"/><path d="M6 20h28M20 6v28"/></svg>
+        <div><h3>Evidence preservation and data acquisition</h3><p>Forensically sound imaging with documented chain of custody, so what you collect stays admissible.</p></div>
+      </div>
+      <div class="item">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="8" y="5" width="18" height="30"/><circle cx="17" cy="29" r="2"/><path d="M26 14h8v16h-8"/></svg>
+        <div><h3>Computer and mobile forensics</h3><p>Deep analysis of laptops, servers and phones: messages, app data, timelines and deleted artifacts.</p></div>
+      </div>
+      <div class="item">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 20a12 12 0 1 1 4 9"/><path d="M4 26l5 4 4-6"/></svg>
+        <div><h3>Data recovery and reconstruction</h3><p>Rebuild damaged, formatted or deliberately wiped storage and recover what investigators need.</p></div>
+      </div>
+      <div class="item">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 20h6l4-10 6 20 5-14 3 4h8"/></svg>
+        <div><h3>Video and audio forensics</h3><p>Enhance, authenticate and analyze recordings to establish what happened and whether a file was altered.</p></div>
+      </div>
+      <div class="item">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4 6 10v10c0 8 6 13 14 16 8-3 14-8 14-16V10z"/><path d="M20 14v10M15 19h10"/></svg>
+        <div><h3>Vulnerability assessment and penetration testing</h3><p>Controlled attacks on your networks and applications, with a prioritized report of what to fix first.</p></div>
+      </div>
+      <div class="item">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 14 20 7l16 7-16 7z"/><path d="M10 18v9c0 3 5 6 10 6s10-3 10-6v-9"/></svg>
+        <div><h3>Digital forensics training</h3><p>Hands-on programs with global technology partners that equip your team to run an investigation on its own.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="process" id="process">
+  <div class="wrap">
+    <h2>One method from first call to a working lab.</h2>
+    <p class="sub">Our 5-D process covers every stage, whether you need a single investigation handled or a full forensic facility set up and staffed.</p>
+    <ol class="steps">
+      <li><div class="n">1</div><h3>Discovery</h3><p>We analyze your needs, define goals and gather detailed requirements.</p></li>
+      <li><div class="n">2</div><h3>Design</h3><p>A full blueprint with functional and technical specifications, plus RFPs when vendors are involved.</p></li>
+      <li><div class="n">3</div><h3>Development</h3><p>We build with in-house technology and vetted third-party systems.</p></li>
+      <li><div class="n">4</div><h3>Deployment</h3><p>We test in real environments for performance, resilience and compatibility.</p></li>
+      <li><div class="n">5</div><h3>Delivery</h3><p>Validation, user training, documentation and long-term support.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="split" style="margin-bottom:96px">
+      <h2>Why teams choose Data Prove</h2>
+      <div class="why">
+        <p>Our certified experts work with you from the first idea to a fully operating environment, then train your people to run it at an expert level.</p>
+        <p>The result is a turnkey forensic capability: a skilled, recognized facility that fits your organization.</p>
+      </div>
+    </div>
+    <div class="contact">
+      <div>
+        <h2>Have a device, a breach or a lab to plan?</h2>
+        <small>Write to info@data-prove.com and we will reply with next steps.</small>
+      </div>
+      <a class="btn" href="https://data-prove.com/contact-us">Talk to an examiner</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>&copy; 2026 Data Prove. All rights reserved.</span>
+    <span>
+      <a href="https://www.linkedin.com/company/data-prove/">LinkedIn</a>
+      <a href="https://www.facebook.com/107698194248769">Facebook</a>
+      <a href="https://www.instagram.com/data_prove/">Instagram</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var nav=document.getElementById("nav"),b=document.getElementById("burger");
+  function sc(){nav.classList.toggle("solid",window.scrollY>12)}
+  sc();window.addEventListener("scroll",sc,{passive:true});
+  function set(o){nav.classList.toggle("open",o);b.setAttribute("aria-expanded",o);b.setAttribute("aria-label",o?"Close menu":"Open menu")}
+  b.addEventListener("click",function(){set(!nav.classList.contains("open"))});
+  nav.addEventListener("click",function(e){if(e.target.closest("ul a"))set(false)});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")set(false)});
+  window.addEventListener("resize",function(){if(innerWidth>860)set(false)});
+})();
+(function(){
+  var final="9f2c41ab7d03e86b5c1a9d4e27f0b83a61c5d9e4f7a20b3d8c6e15a94f7b2d08";
+  var el=document.getElementById("hash"),st=document.getElementById("st"),hex="0123456789abcdef";
+  function show(s){el.textContent="sha256 "+s.slice(0,8)+"..."+s.slice(-5)}
+  function done(){show(final);st.textContent="Evidence verified"}
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){done();return}
+  var n=0,t=setInterval(function(){
+    var s="";for(var i=0;i<final.length;i++)s+=hex[Math.floor(Math.random()*16)];
+    show(s);if(++n>28){clearInterval(t);done()}
+  },45);
+})();
+(function(){
+  var box=document.getElementById("wordmark"),cv=box.firstChild,ctx=cv.getContext("2d");
+  var TXT="Data Prove",WT=800,SP=-0.04,COL="#ffffff",SW=1.5,DASH=[4,2];
+  var rm=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var w=1,h=1,dpr=1,size=0,base=0,G=[],B={l:0,r:0,t:0,b:0},ptr={x:0,y:0,in:false},drag=-1,grab={x:0,y:0},
+      clock=0,pulse=0,raf=0,vis=true,last=0,placed=false,lens={x:0,y:0},fr={x1:0,y1:0,x2:0,y2:0,a:0,i:-1};
+  function ap(c,t,dt,s){return c+(t-c)*(1-Math.exp(-dt/s))}
+  function rgb(a){return "rgba(196,96,122,"+a+")"}
+  function nz(){var x=2166136261;for(var i=0;i<arguments.length;i++){x=Math.imul(x^(arguments[i]|0),16777619);x^=x>>>13;x=Math.imul(x,0x5bd1e995);x^=x>>>15}return(x>>>0)/4294967296}
+  function setF(s){ctx.font=WT+" "+s+"px "+getComputedStyle(box).fontFamily;ctx.letterSpacing=(SP*s)+"px";ctx.textBaseline="alphabetic";ctx.textAlign="left"}
+  function layout(){
+    ctx.setTransform(dpr,0,0,dpr,0,0);setF(260);
+    var m=ctx.measureText(TXT),iw=m.actualBoundingBoxLeft+m.actualBoundingBoxRight,ih=m.actualBoundingBoxAscent+m.actualBoundingBoxDescent;
+    size=260*Math.min(w*.98/iw,h*.72/ih);setF(size);
+    m=ctx.measureText(TXT);iw=m.actualBoundingBoxLeft+m.actualBoundingBoxRight;ih=m.actualBoundingBoxAscent+m.actualBoundingBoxDescent;
+    var x=(w-iw)/2+m.actualBoundingBoxLeft;base=(h-ih)/2+m.actualBoundingBoxAscent;
+    var old=G;G=[];var pre="";
+    Array.from(TXT).forEach(function(ch,i){
+      pre+=ch;var o=ctx.measureText(ch),gx=x+ctx.measureText(pre).width-o.width;if(!ch.trim())return;
+      var k=old[G.length];
+      G.push({ch:ch,x:gx,ox:k?k.ox:0,oy:k?k.oy:0,vx:0,vy:0,o:0,
+        b:{x1:gx-o.actualBoundingBoxLeft,y1:base-o.actualBoundingBoxAscent,x2:gx+o.actualBoundingBoxRight,y2:base+o.actualBoundingBoxDescent}});
+    });
+    B.l=G[0].b.x1;B.r=G[G.length-1].b.x2;B.t=Math.min.apply(0,G.map(function(g){return g.b.y1}));B.b=Math.max.apply(0,G.map(function(g){return g.b.y2}));
+    drag=-1;fr.i=-1;
+  }
+  function glyphAt(x,y){
+    if(y<B.t-24||y>B.b+24)return -1;var best=-1,bd=1e9;
+    G.forEach(function(g,i){var a=g.b.x1+g.ox,b=g.b.x2+g.ox,d=x<a?a-x:x>b?x-b:0;if(d<bd){bd=d;best=i}});
+    return bd<28?best:-1;
+  }
+  function perim(d,fw,fh){var P=2*(fw+fh);d=((d%P)+P)%P;
+    if(d<fw)return[fr.x1+d,fr.y1,0,-1];d-=fw;if(d<fh)return[fr.x2,fr.y1+d,1,0];d-=fh;if(d<fw)return[fr.x2-d,fr.y2,0,1];d-=fw;return[fr.x1,fr.y2-d,-1,0]}
+  function specks(a){
+    var fw=fr.x2-fr.x1,fh=fr.y2-fr.y1,P=2*(fw+fh),sd=fr.i+1;if(fw<2||fh<2)return;
+    for(var k=0;k<15;k++){
+      var per=.5+nz(sd,k,11)*1.2,t=pulse/per+nz(sd,k,17),cy=Math.floor(t),life=t-cy;if(life>.7)continue;
+      var p=perim(nz(sd,k,cy)*P,fw,fh),pk=nz(sd,k,cy,2),sz=pk<.46?2:pk<.7?3:pk<.84?5:pk<.94?8:11,
+          out=(sz>=8?9:4)+Math.floor(nz(sd,k,cy,1)*5)*3,x=Math.round(p[0]+p[2]*out),y=Math.round(p[1]+p[3]*out),
+          tn=nz(sd,k,cy,3),al=a*(.3+.6*tn)*(life<.06?.35:1);
+      if(tn<.26||(sz>=8&&tn<.78)){ctx.strokeStyle=rgb(al);ctx.strokeRect(Math.round(x-sz/2)+.5,Math.round(y-sz/2)+.5,sz,sz)}
+      else{ctx.fillStyle=rgb(al);ctx.fillRect(Math.round(x-sz/2),Math.round(y-sz/2),sz,sz)}
+    }
+    for(var j=0;j<2;j++){var hd=(pulse*.42+j*.5)*P;
+      for(var i=0;i<4;i++){var q=perim(hd-i*6,fw,fh),s=i?2:3;ctx.fillStyle=rgb(a*[.95,.55,.32,.16][i]);ctx.fillRect(Math.round(q[0]-s/2),Math.round(q[1]-s/2),s,s)}}
+  }
+  function crisp(v){return Math.round(v)+.5}
+  function drawFrame(){
+    var g=G[fr.i];if(!g||fr.a<.01)return;var a=fr.a,x1=crisp(fr.x1),y1=crisp(fr.y1),x2=crisp(fr.x2),y2=crisp(fr.y2);
+    var mv=Math.hypot(g.ox,g.oy);
+    if(mv>1){var hx=(g.b.x1+g.b.x2)/2,hy=(g.b.y1+g.b.y2)/2;ctx.beginPath();ctx.moveTo(hx,hy);ctx.lineTo(hx+g.ox,hy+g.oy);ctx.setLineDash([3,4]);ctx.lineWidth=1;ctx.strokeStyle=rgb(.45*a);ctx.stroke();ctx.setLineDash([])}
+    ctx.lineWidth=1;ctx.strokeStyle=rgb(.5*a);ctx.strokeRect(x1,y1,x2-x1,y2-y1);
+    ctx.fillStyle=rgb(.95*a);[[x1,y1],[x2,y1],[x2,y2],[x1,y2]].forEach(function(c){ctx.fillRect(Math.round(c[0])-2,Math.round(c[1])-2,5,5)});
+    specks(a);
+    ctx.font="10px ui-monospace,Menlo,Consolas,monospace";ctx.letterSpacing="0px";ctx.textBaseline="bottom";ctx.fillStyle=rgb(.7*a);
+    ctx.fillText(mv>1?(Math.round(g.ox)>0?"+":"")+Math.round(g.ox)+", "+Math.round(-g.oy):g.ch+"  "+Math.round(g.b.x2-g.b.x1)+" × "+Math.round(g.b.y2-g.b.y1),Math.round(fr.x1),Math.round(fr.y1)-7);
+  }
+  function tick(now){
+    raf=0;var dt=Math.min(.05,Math.max(.001,(now-last)/1000));last=now;
+    var sweep=!rm&&!ptr.in&&drag<0;if(sweep)clock+=dt;pulse+=dt;
+    var tx=ptr.x,ty=ptr.y;if(sweep){tx=B.l+(B.r-B.l)*(.5-.5*Math.cos(clock*.45));ty=(B.t+B.b)/2}
+    var act=ptr.in||sweep||drag>=0;
+    if(act&&!placed){lens.x=tx;lens.y=ty}
+    if(act){var lag=ptr.in?.05:.22;lens.x=ap(lens.x,tx,dt,lag);lens.y=ap(lens.y,ty,dt,lag)}
+    placed=act;var moving=false;
+    G.forEach(function(g,i){
+      if(i===drag){g.ox=ap(g.ox,ptr.x-grab.x,dt,.03);g.oy=ap(g.oy,ptr.y-grab.y,dt,.03);g.vx=g.vy=0;moving=true;return}
+      if(Math.abs(g.ox)<.05&&Math.abs(g.oy)<.05&&Math.hypot(g.vx,g.vy)<.5){g.ox=g.oy=g.vx=g.vy=0;return}
+      g.vx+=(-320*g.ox-22*g.vx)*dt;g.vy+=(-320*g.oy-22*g.vy)*dt;g.ox+=g.vx*dt;g.oy+=g.vy*dt;moving=true;
+    });
+    var f=drag>=0?drag:act?glyphAt(lens.x,lens.y):-1;
+    if(f>=0){var g=G[f],bx1=g.b.x1+g.ox-6,by1=g.b.y1+g.oy-6,bx2=g.b.x2+g.ox+6,by2=g.b.y2+g.oy+6;
+      if(fr.i<0||fr.a<.02){fr.x1=bx1;fr.y1=by1;fr.x2=bx2;fr.y2=by2}
+      var gl=f===drag?.02:.08;fr.x1=ap(fr.x1,bx1,dt,gl);fr.y1=ap(fr.y1,by1,dt,gl);fr.x2=ap(fr.x2,bx2,dt,gl);fr.y2=ap(fr.y2,by2,dt,gl);fr.i=f}
+    fr.a=ap(fr.a,f>=0?1:0,dt,.1);
+    G.forEach(function(g,i){var t=i===f&&i!==drag?1:0;g.o=ap(g.o,t,dt,.09);if(Math.abs(g.o-t)>.002)moving=true;else g.o=t});
+    box.style.cursor=drag>=0?"grabbing":(f>=0&&ptr.in?"grab":"");
+    ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);setF(size);
+    G.forEach(function(g){
+      ctx.save();ctx.translate(g.ox,g.oy);
+      if(g.o<.999){ctx.globalAlpha=1-g.o;ctx.fillStyle=COL;ctx.fillText(g.ch,g.x,base)}
+      if(g.o>.001){ctx.globalAlpha=g.o;ctx.lineWidth=SW;ctx.lineJoin="round";ctx.strokeStyle=COL;ctx.setLineDash(DASH);ctx.strokeText(g.ch,g.x,base);ctx.setLineDash([])}
+      ctx.restore();
+    });
+    ctx.globalAlpha=1;drawFrame();
+    if(vis&&!off&&(act||moving||(fr.a>.01&&fr.a<.99)))raf=requestAnimationFrame(tick);
+  }
+  function wake(){if(raf||!vis||off)return;last=performance.now();raf=requestAnimationFrame(tick)}
+  function resize(){w=Math.max(1,box.clientWidth);h=Math.max(1,box.clientHeight);dpr=Math.min(devicePixelRatio||1,2);cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);layout();if(typeof update==="function")update();wake()}
+  function loc(e){var r=box.getBoundingClientRect(),sc=r.width/w||1;ptr.x=(e.clientX-r.left)/sc;ptr.y=(e.clientY-r.top)/sc}
+  box.addEventListener("pointermove",function(e){loc(e);ptr.in=true;wake()},{passive:true});
+  box.addEventListener("pointerenter",function(e){loc(e);ptr.in=true;wake()},{passive:true});
+  box.addEventListener("pointerleave",function(){if(drag>=0)return;ptr.in=false;wake()},{passive:true});
+  box.addEventListener("pointerdown",function(e){loc(e);ptr.in=true;if(e.pointerType!=="mouse"||e.button===0){var i=glyphAt(ptr.x,ptr.y);if(i>=0){drag=i;grab.x=ptr.x-G[i].ox;grab.y=ptr.y-G[i].oy;box.setPointerCapture&&box.setPointerCapture(e.pointerId)}}wake()},{passive:true});
+  function up(e){if(drag>=0){drag=-1;box.releasePointerCapture&&box.releasePointerCapture(e.pointerId);var r=box.getBoundingClientRect();ptr.in=e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom}wake()}
+  box.addEventListener("pointerup",up,{passive:true});box.addEventListener("pointercancel",up,{passive:true});
+  new ResizeObserver(resize).observe(box);
+  new IntersectionObserver(function(en){vis=en[0].isIntersecting;wake()}).observe(box);
+  if(document.fonts)document.fonts.load(WT+" 64px Montserrat",TXT).then(resize,resize);
+  var slot=document.getElementById("slot"),lt=document.getElementById("logotext"),off=false,G0={};
+  function measure(){
+    var sr=slot.getBoundingClientRect();G0.l=sr.left;G0.t=sr.top+scrollY;G0.w=slot.offsetWidth;G0.h=slot.offsetHeight;
+    box.style.width=G0.w+"px";box.style.height=G0.h+"px";
+    var lr=lt.getBoundingClientRect();G0.lw=lr.width;G0.lx=lr.left;G0.ly=lr.top+lr.height/2;
+  }
+  function update(){
+    var inkW=B.r-B.l;if(!inkW||!G0.w)return;
+    var k=G0.lw/inkW,L1=G0.lx-k*B.l,T1=G0.ly-k*(B.t+B.b)/2,s=scrollY,
+        D=Math.min(560,Math.max(220,G0.t-T1)),p=Math.min(1,s/D),e=p*p*(3-2*p),
+        L=G0.l+(L1-G0.l)*e,T0=G0.t-s,T=T0+(T1-T0)*e,sc=1+(k-1)*e,f=Math.min(1,Math.max(0,(p-.85)/.15));
+    box.style.transform="translate("+L+"px,"+T+"px) scale("+sc+")";
+    box.style.opacity=1-f;lt.style.opacity=f;box.style.pointerEvents=p<.02?"auto":"none";
+    if(p>.02)ptr.in=false;
+    var was=off;off=p>=1;if(was&&!off)wake();
+  }
+  new ResizeObserver(function(){measure();update()}).observe(slot);
+  addEventListener("scroll",update,{passive:true});addEventListener("resize",function(){measure();update()});
+  if(document.fonts)document.fonts.ready.then(function(){measure();update()});
+  measure();
+  resize();
+})();
+</script>
+</body>
+</html>
